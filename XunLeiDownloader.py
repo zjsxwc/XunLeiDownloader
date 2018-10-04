@@ -40,9 +40,9 @@ class XunLeiDownloader:
 	def leftMouseClick(self, posX, posY):
 		win32api.SetCursorPos([posX, posY])
 		win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,0,0,0,0)
-		time.sleep(0.5)
+		time.sleep(0.2)
 		win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,0,0,0,0)
-		time.sleep(0.5)	
+		time.sleep(0.1)	
 
 
 	def startDownload(self, downloadUrls):
@@ -76,11 +76,12 @@ class XunLeiDownloader:
 			self.ctrlV()
 			self.leftMouseClick(wndCreateDownloadRect[0]+10, wndCreateDownloadRect[1]+10)
 			
-			win32api.SetCursorPos([wndCreateDownloadRect[0] + 150,wndCreateDownloadRect[1]+ 215])
-			time.sleep(1)
+			time.sleep(0.5)
 			c = gdi32.GetPixel(hdc,wndCreateDownloadRect[0] + 150,wndCreateDownloadRect[1]+ 215)
 			chex = hex(c)
 			print chex
+			win32api.SetCursorPos([wndCreateDownloadRect[0] + 150,wndCreateDownloadRect[1]+ 215])
+
 			if ((chex == "0xfefefe") or (chex == "0xffffff")):
 				# 开始下载
 				self.leftMouseClick(wndCreateDownloadRect[2]-150, wndCreateDownloadRect[3]-250)
