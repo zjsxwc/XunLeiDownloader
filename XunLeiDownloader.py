@@ -76,15 +76,17 @@ class XunLeiDownloader:
 			self.ctrlV()
 			self.leftMouseClick(wndCreateDownloadRect[0]+10, wndCreateDownloadRect[1]+10)
 			
+			win32api.SetCursorPos([wndCreateDownloadRect[0] + 150,wndCreateDownloadRect[1]+ 215])
+			time.sleep(1)
 			c = gdi32.GetPixel(hdc,wndCreateDownloadRect[0] + 150,wndCreateDownloadRect[1]+ 215)
 			chex = hex(c)
 			print chex
-			if (chex == "0xfe9865"):
-				# 无效链接地址取消下载
-				self.leftMouseClick(wndCreateDownloadRect[2]-30, wndCreateDownloadRect[1]+15)
-			else:
+			if ((chex == "0xfefefe") or (chex == "0xffffff")):
 				# 开始下载
 				self.leftMouseClick(wndCreateDownloadRect[2]-150, wndCreateDownloadRect[3]-250)
+			else:
+				# 无效链接地址取消下载
+				self.leftMouseClick(wndCreateDownloadRect[2]-30, wndCreateDownloadRect[1]+15)
 			
 
 			print "关闭[新建下载]\r\n"
