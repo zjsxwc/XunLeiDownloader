@@ -10,6 +10,7 @@ import win32gui
 import win32api
 import win32con
 import win32clipboard
+from ctypes import *
 
 import os
 import time
@@ -45,6 +46,10 @@ class XunLeiDownloader:
 
 
 	def startDownload(self, downloadUrls):
+		gdi32 = windll.gdi32
+		user32 = windll.user32
+		hdc = user32.GetDC(None)
+
 		win32clipboard.OpenClipboard()
 		win32clipboard.EmptyClipboard()
 		win32clipboard.SetClipboardData(win32con.CF_TEXT, "")
@@ -60,7 +65,7 @@ class XunLeiDownloader:
 		time.sleep(0.1)
 		win32clipboard.OpenClipboard()
 		win32clipboard.EmptyClipboard()
-		win32clipboard.SetClipboardData(win32con.CF_TEXT, downloadUrls)
+		win32clipboard.SetClipboardData(win32con.CF_TEXT, downloadUrls.decode('utf-8').encode('gbk'))
 		win32clipboard.CloseClipboard()
 
 		wndCreateDownload = win32gui.FindWindow(None, u"新建下载")
@@ -70,17 +75,23 @@ class XunLeiDownloader:
 			self.leftMouseClick(wndCreateDownloadRect[0]+60, wndCreateDownloadRect[1]+70)
 			self.ctrlV()
 			self.leftMouseClick(wndCreateDownloadRect[0]+10, wndCreateDownloadRect[1]+10)
-			# win32api.SetCursorPos([wndCreateDownloadRect[2]-150, wndCreateDownloadRect[3]-250])
-			self.leftMouseClick(wndCreateDownloadRect[2]-150, wndCreateDownloadRect[3]-250)
-
+			
+			c = gdi32.GetPixel(hdc,wndCreateDownloadRect[0] + 150,wndCreateDownloadRect[1]+ 215)
+			chex = hex(c)
+			print chex
+			if (chex == "0xfe9865"):
+				# 无效链接地址取消下载
+				self.leftMouseClick(wndCreateDownloadRect[2]-30, wndCreateDownloadRect[1]+15)
+			else:
+				# 开始下载
+				self.leftMouseClick(wndCreateDownloadRect[2]-150, wndCreateDownloadRect[3]-250)
+			
 
 			print "关闭[新建下载]\r\n"
 			alreadyExistDlg = win32gui.FindWindowEx(None,None,'XLUEModalHostWnd',"MessageBox")
 			if alreadyExistDlg:
 				alreadyExistDlgRect = win32gui.GetWindowRect(alreadyExistDlg)
 				self.leftMouseClick(alreadyExistDlgRect[0]+390, alreadyExistDlgRect[1]+35)
-				# win32gui.SendMessage(alreadyExistDlg, 0x0090)
-				# win32gui.SendMessage(wndCreateDownload, win32con.WM_CLOSE) 这么关闭有BUG
+				# win32gui.SendMessage(wndCreateDownload, win32con.WM_CLOSE) 这么关闭迅雷自己撸的非标准GUI框架窗体会有BUG
 		else:
 			print "[新建下载]不存在\r\n"
-
