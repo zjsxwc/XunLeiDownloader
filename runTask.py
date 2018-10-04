@@ -25,7 +25,7 @@ while True:
 				xld.startDownload(task)
 				xld = None
 		
-		finally:
+		except:
 			pass
 	time.sleep(5)
 
